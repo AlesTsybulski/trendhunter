@@ -1,0 +1,2 @@
+# trendhunter
+ trend analytics platform
