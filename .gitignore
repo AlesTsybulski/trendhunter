@@ -205,3 +205,21 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Секреты — никогда не в Git
+.env
+
+# Виртуальное окружение
+venv/
+
+# Docker
+*.log
+
+# Django
+*.pyc
+__pycache__/
+db.sqlite3
+staticfiles/
+
+# OS
+.DS_Store

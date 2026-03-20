@@ -1,0 +1,58 @@
+services:
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: trendhunter
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+    env_file: .env
+    volumes:
+      - .:/app
+
+  worker:
+    build: .
+    command: celery -A config worker --loglevel=info
+    depends_on:
+      - redis
+      - postgres
+    env_file: .env
+    volumes:
+      - .:/app
+
+  beat:
+    build: .
+    command: celery -A config beat --loglevel=info
+    depends_on:
+      - redis
+    env_file: .env
+    volumes:
+      - .:/app
+
+  flower:
+    build: .
+    command: celery -A config flower --port=5555
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+    env_file: .env
+    volumes:
+      - .:/app
+
+volumes:
+  postgres_data:
