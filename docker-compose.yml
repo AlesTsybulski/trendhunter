@@ -26,7 +26,7 @@ services:
 
   worker:
     build: .
-    command: celery -A config worker --loglevel=info
+    command: celery -A config worker --loglevel=info --concurrency=1 -E
     depends_on:
       - redis
       - postgres
@@ -45,7 +45,7 @@ services:
 
   flower:
     build: .
-    command: celery -A config flower --port=5555
+    command: celery -A config flower --address=0.0.0.0 --port=5555
     ports:
       - "5555:5555"
     depends_on:
