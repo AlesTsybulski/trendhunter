@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Log In — TrendHunter{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <h1 class="auth-title">LOG IN</h1>
+    <p class="auth-sub">No account? <a href="/users/register/">Sign up</a></p>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="form-label" for="username">Username</label>
+        <input class="form-input" type="text" id="username" name="username"
+               autocomplete="username" autofocus required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input class="form-input" type="password" id="password" name="password"
+               autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn btn-primary form-submit">LOG IN</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

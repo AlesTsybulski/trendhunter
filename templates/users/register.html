@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up — TrendHunter{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <h1 class="auth-title">SIGN UP</h1>
+    <p class="auth-sub">Already have an account? <a href="/users/login/">Log in</a></p>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="form-label" for="username">Username</label>
+        <input class="form-input" type="text" id="username" name="username"
+               autocomplete="username" autofocus required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="email">Email</label>
+        <input class="form-input" type="email" id="email" name="email"
+               autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input class="form-input" type="password" id="password" name="password"
+               autocomplete="new-password" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="password2">Confirm Password</label>
+        <input class="form-input" type="password" id="password2" name="password2"
+               autocomplete="new-password" required>
+      </div>
+      <button type="submit" class="btn btn-primary form-submit">CREATE ACCOUNT</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

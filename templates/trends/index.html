@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}US TikTok Trends — TrendHunter{% endblock %}
+
+{% block content %}
+<div class="main">
+
+  <div class="page-header">
+    <div class="page-header-row">
+      <h1 class="page-title">US <em>TRENDS</em></h1>
+      <div class="live-pill">
+        <span class="live-dot"></span>
+        TIKTOK &middot; UNITED STATES
+      </div>
+    </div>
+
+    <div id="content-section">
+      {% include "partials/trend_content.html" %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% load trend_filters %}
+
+<div class="filter-tabs">
+  <button class="filter-tab {% if active_filter == '' %}active{% endif %}"
+          hx-get="/?trend_type="
+          hx-target="#content-section"
+          hx-swap="innerHTML"
+          hx-push-url="true">ALL</button>
+  <button class="filter-tab {% if active_filter == 'hashtag' %}active{% endif %}"
+          hx-get="/?trend_type=hashtag"
+          hx-target="#content-section"
+          hx-swap="innerHTML"
+          hx-push-url="true">HASHTAGS</button>
+  <button class="filter-tab {% if active_filter == 'sound' %}active{% endif %}"
+          hx-get="/?trend_type=sound"
+          hx-target="#content-section"
+          hx-swap="innerHTML"
+          hx-push-url="true">SOUNDS</button>
+</div>
+
+<div class="trend-list" style="margin-top: 4px;">
+  {% if trends %}
+    {% for trend in trends %}
+    <div class="trend-row" style="--i: {{ forloop.counter0 }}" data-rank="{{ forloop.counter }}">
+      <div class="trend-rank">{{ forloop.counter|stringformat:"02d" }}</div>
+      <div class="trend-content">
+        <div class="trend-top">
+          <span class="trend-name">{{ trend.name }}</span>
+          <span class="trend-badge trend-badge--{{ trend.trend_type }}">{{ trend.trend_type }}</span>
+          <span class="trend-score {% if trend.viral_score >= 200 %}hot{% elif trend.viral_score > 0 %}up{% endif %}">
+            {% if trend.viral_score > 0 %}+{% endif %}{{ trend.viral_score|floatformat:0 }}%
+          </span>
+        </div>
+        <div class="trend-bottom">
+          <div class="score-bar">
+            <div class="score-bar-fill"
+                 style="--w: {{ trend.viral_score|score_width:max_score }}%; --i: {{ forloop.counter0 }}">
+            </div>
+          </div>
+          <span class="trend-views">{{ trend.view_count|format_views }}</span>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">—</div>
+      <p class="empty-title">NO TRENDS YET</p>
+      <p class="empty-text">
+        Data will appear here once the collector runs.<br>
+        Add a RapidAPI key to start scraping.
+      </p>
+    </div>
+  {% endif %}
+</div>

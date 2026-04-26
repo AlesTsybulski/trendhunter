@@ -223,3 +223,6 @@ staticfiles/
 
 # OS
 .DS_Store
+
+# Markdown files
+*.md

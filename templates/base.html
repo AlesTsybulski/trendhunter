@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}TrendHunter{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.3/dist/htmx.min.js"></script>
+  <style>
+    /* ── TOKENS ───────────────────────────────────────────── */
+    :root {
+      --bg:         oklch(0.10 0.013 258);
+      --s1:         oklch(0.14 0.014 258);
+      --s2:         oklch(0.18 0.013 258);
+      --border:     oklch(0.22 0.011 258);
+      --border-2:   oklch(0.16 0.009 258);
+      --t1:         oklch(0.93 0.008 258);
+      --t2:         oklch(0.57 0.011 258);
+      --t3:         oklch(0.33 0.008 258);
+      --accent:     oklch(0.75 0.16 52);
+      --accent-bg:  oklch(0.75 0.16 52 / 0.09);
+      --up:         oklch(0.71 0.15 145);
+      --up-bg:      oklch(0.71 0.15 145 / 0.08);
+      --down:       oklch(0.63 0.19 25);
+      --fd: 'Barlow Condensed', sans-serif;
+      --fb: 'Manrope', sans-serif;
+    }
+
+    /* ── RESET ────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      background-image:
+        linear-gradient(oklch(1 0 0 / 0.016) 1px, transparent 1px),
+        linear-gradient(90deg, oklch(1 0 0 / 0.016) 1px, transparent 1px);
+      background-size: 32px 32px;
+      color: var(--t1);
+      font-family: var(--fb);
+      font-size: 0.875rem;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── NAV ──────────────────────────────────────────────── */
+    .nav {
+      height: 52px;
+      border-bottom: 1px solid var(--border-2);
+      padding: 0 clamp(16px, 4vw, 48px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 50;
+    }
+
+    .nav-logo {
+      font-family: var(--fd);
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: 0.12em;
+      color: var(--t1);
+    }
+    .nav-logo em { color: var(--accent); font-style: normal; }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-user {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--t2);
+      margin-right: 4px;
+    }
+
+    /* ── BUTTONS ──────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 13px;
+      border-radius: 3px;
+      font-family: var(--fb);
+      font-size: 0.775rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: opacity 0.15s, background 0.15s, color 0.15s, border-color 0.15s;
+      line-height: 1.6;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--t2);
+    }
+    .btn-ghost:hover { color: var(--t1); border-color: var(--t2); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: oklch(0.10 0.013 258);
+      font-weight: 700;
+      border-color: var(--accent);
+    }
+    .btn-primary:hover { opacity: 0.88; }
+
+    /* ── MESSAGES ─────────────────────────────────────────── */
+    .messages {
+      list-style: none;
+      padding: 10px clamp(16px, 4vw, 48px);
+    }
+    .messages li {
+      background: color-mix(in oklch, var(--down) 20%, var(--s1));
+      border: 1px solid color-mix(in oklch, var(--down) 35%, transparent);
+      color: oklch(0.88 0.05 25);
+      padding: 9px 14px;
+      border-radius: 3px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    /* ── LAYOUT ───────────────────────────────────────────── */
+    .main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: clamp(24px, 4vw, 48px) clamp(16px, 4vw, 48px);
+    }
+
+    /* ── PAGE HEADER ──────────────────────────────────────── */
+    .page-header {
+      margin-bottom: 28px;
+    }
+
+    .page-header-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .page-title {
+      font-family: var(--fd);
+      font-weight: 800;
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      letter-spacing: 0.07em;
+      line-height: 1;
+    }
+    .page-title em { color: var(--accent); font-style: normal; }
+
+    .live-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--t2);
+      white-space: nowrap;
+    }
+
+    .live-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--up);
+      animation: blink 2.2s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    /* ── FILTER TABS ──────────────────────────────────────── */
+    .filter-tabs {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid var(--border-2);
+    }
+
+    .filter-tab {
+      font-family: var(--fd);
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      padding: 7px 16px;
+      border: none;
+      background: none;
+      color: var(--t3);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .filter-tab:hover { color: var(--t2); }
+    .filter-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* ── HTMX LOADING ─────────────────────────────────────── */
+    .htmx-indicator {
+      display: none;
+      font-size: 0.75rem;
+      color: var(--t3);
+      padding: 12px 0;
+      letter-spacing: 0.06em;
+    }
+    .htmx-request + .htmx-indicator,
+    .htmx-request.htmx-indicator { display: block; }
+
+    /* ── TREND ROW ────────────────────────────────────────── */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes bar-grow {
+      from { transform: scaleX(0); }
+      to   { transform: scaleX(1); }
+    }
+
+    .trend-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .trend-row {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 0 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border-2);
+      animation: fade-up 0.3s ease-out both;
+      animation-delay: calc(var(--i, 0) * 35ms);
+    }
+    .trend-row:last-child { border-bottom: none; }
+    .trend-row:hover { background: oklch(1 0 0 / 0.012); margin: 0 -8px; padding-left: 8px; padding-right: 8px; border-radius: 3px; }
+
+    .trend-rank {
+      font-family: var(--fd);
+      font-weight: 800;
+      font-size: 2.6rem;
+      line-height: 1;
+      color: var(--border-2);
+      text-align: right;
+      padding-top: 3px;
+      user-select: none;
+    }
+    .trend-row[data-rank="1"] .trend-rank { color: oklch(0.48 0.12 52); }
+    .trend-row[data-rank="2"] .trend-rank { color: oklch(0.30 0.06 52); }
+    .trend-row[data-rank="3"] .trend-rank { color: oklch(0.24 0.04 258); }
+
+    .trend-content {
+      min-width: 0;
+    }
+
+    .trend-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 7px;
+      flex-wrap: nowrap;
+    }
+
+    .trend-name {
+      font-family: var(--fd);
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.03em;
+      color: var(--t1);
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .trend-badge {
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      padding: 2px 6px;
+      border-radius: 2px;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+    .trend-badge--hashtag {
+      background: oklch(0.55 0.12 258 / 0.14);
+      color: oklch(0.68 0.11 258);
+      border: 1px solid oklch(0.55 0.12 258 / 0.22);
+    }
+    .trend-badge--sound {
+      background: oklch(0.55 0.14 310 / 0.14);
+      color: oklch(0.70 0.12 310);
+      border: 1px solid oklch(0.55 0.14 310 / 0.22);
+    }
+
+    .trend-score {
+      font-family: var(--fd);
+      font-weight: 700;
+      font-size: 1.25rem;
+      line-height: 1;
+      flex-shrink: 0;
+      color: var(--t3);
+      min-width: 56px;
+      text-align: right;
+    }
+    .trend-score.up    { color: var(--up); }
+    .trend-score.hot   { color: var(--accent); }
+
+    .trend-bottom {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .score-bar {
+      flex: 1;
+      height: 2px;
+      background: var(--border-2);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .score-bar-fill {
+      height: 100%;
+      width: var(--w, 0%);
+      background: var(--up);
+      border-radius: 2px;
+      transform-origin: left;
+      animation: bar-grow 0.55s ease-out both;
+      animation-delay: calc(var(--i, 0) * 35ms + 80ms);
+    }
+    .trend-row[data-rank="1"] .score-bar-fill { background: var(--accent); }
+
+    .trend-views {
+      font-size: 0.7rem;
+      color: var(--t3);
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ── EMPTY STATE ──────────────────────────────────────── */
+    .empty-state {
+      padding: 72px 0;
+      text-align: center;
+    }
+
+    .empty-icon {
+      font-family: var(--fd);
+      font-weight: 800;
+      font-size: 4rem;
+      letter-spacing: 0.1em;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .empty-title {
+      font-family: var(--fd);
+      font-weight: 700;
+      font-size: 1.2rem;
+      letter-spacing: 0.08em;
+      color: var(--t2);
+      margin-bottom: 8px;
+    }
+
+    .empty-text {
+      font-size: 0.8rem;
+      color: var(--t3);
+      line-height: 1.75;
+      max-width: 34ch;
+      margin: 0 auto;
+    }
+
+    /* ── AUTH PAGE ────────────────────────────────────────── */
+    .auth-page {
+      min-height: calc(100vh - 52px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 340px;
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 28px 28px 32px;
+    }
+
+    .auth-title {
+      font-family: var(--fd);
+      font-weight: 800;
+      font-size: 1.9rem;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .auth-sub {
+      font-size: 0.78rem;
+      color: var(--t2);
+      margin-bottom: 24px;
+    }
+    .auth-sub a { color: var(--accent); }
+    .auth-sub a:hover { text-decoration: underline; }
+
+    .form-group { margin-bottom: 14px; }
+
+    .form-label {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--t2);
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
+
+    .form-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--t1);
+      font-family: var(--fb);
+      font-size: 0.875rem;
+      padding: 8px 11px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .form-input:focus  { border-color: var(--accent); }
+    .form-input::placeholder { color: var(--t3); }
+
+    .form-submit {
+      width: 100%;
+      padding: 9px;
+      font-family: var(--fd);
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      margin-top: 6px;
+    }
+
+    /* ── FOOTER ───────────────────────────────────────────── */
+    .footer {
+      margin-top: auto;
+      border-top: 1px solid var(--border-2);
+      padding: 14px clamp(16px, 4vw, 48px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--t3);
+      font-size: 0.7rem;
+      letter-spacing: 0.03em;
+    }
+    .footer a { color: var(--t3); transition: color 0.15s; }
+    .footer a:hover { color: var(--t2); }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <a href="/" class="nav-logo">TREND<em>HUNTER</em></a>
+    <div class="nav-right">
+      {% if request.user.is_authenticated %}
+        <span class="nav-user">{{ request.user.username }}</span>
+        <a href="/users/logout/" class="btn btn-ghost">Logout</a>
+      {% else %}
+        <a href="/users/login/" class="btn btn-ghost">Log in</a>
+        <a href="/users/register/" class="btn btn-primary">Sign up</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% block content %}{% endblock %}
+
+  <footer class="footer">
+    <span>TrendHunter &mdash; US TikTok Trends</span>
+    <a href="/api/docs/">API Docs</a>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+venv/
+.env
+__pycache__/
+*.pyc
+*.pyo
+.git/
+.gitignore
+staticfiles/
+*.log
+celerybeat-schedule
+celerybeat.pid
+.mypy_cache/
+.pytest_cache/
