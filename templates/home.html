@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}TrendHunter — US TikTok Trends{% endblock %}
+
+{% block content %}
+<div class="hero">
+  <p class="hero-eyebrow">US TIKTOK TRENDS</p>
+  <h1 class="hero-headline">
+    SEE WHAT'S<br>
+    <em>GOING VIRAL</em><br>
+    FIRST
+  </h1>
+  <p class="hero-body">
+    Real-time hashtag and sound data for TikTok US.<br>
+    Built for creators who need to move before the wave peaks.
+  </p>
+  <div class="hero-actions">
+    <a href="/users/register/" class="btn btn-primary btn-lg">Sign up free</a>
+    <a href="/users/login/" class="btn btn-ghost btn-lg">Log in</a>
+  </div>
+</div>
+
+<div class="features">
+  <div class="feature-card">
+    <div class="feature-glyph">#</div>
+    <p class="feature-title">TRENDING HASHTAGS</p>
+    <p class="feature-text">Track which hashtags are gaining momentum in the US right now.</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-glyph">♪</div>
+    <p class="feature-title">VIRAL SOUNDS</p>
+    <p class="feature-text">Spot audio spreading before it saturates your niche.</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-glyph">↑</div>
+    <p class="feature-title">VIRAL SCORE</p>
+    <p class="feature-text">A single number showing how fast each trend is growing.</p>
+  </div>
+</div>
+{% endblock %}

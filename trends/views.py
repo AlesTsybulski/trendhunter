@@ -29,6 +29,9 @@ class TrendDetailView(generics.RetrieveAPIView):
 
 class DashboardView(View):
     def get(self, request):
+        if not request.user.is_authenticated:
+            return render(request, 'home.html')
+
         trend_type = request.GET.get('trend_type', '')
         qs = Trend.objects.select_related('platform', 'country').order_by('-viral_score')
         if trend_type in ('hashtag', 'sound'):

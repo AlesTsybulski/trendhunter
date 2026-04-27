@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from django.contrib import messages
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
@@ -25,16 +27,21 @@ def register_page(request):
         password = request.POST.get('password', '')
         password2 = request.POST.get('password2', '')
 
-        if password != password2:
+        if not username:
+            messages.error(request, 'Username is required.')
+        elif password != password2:
             messages.error(request, 'Passwords do not match.')
-        elif len(password) < 8:
-            messages.error(request, 'Password must be at least 8 characters.')
         elif User.objects.filter(username=username).exists():
             messages.error(request, 'That username is already taken.')
         else:
-            user = User.objects.create_user(username=username, email=email, password=password)
-            login(request, user)
-            return redirect('/')
+            try:
+                validate_password(password)
+                user = User.objects.create_user(username=username, email=email, password=password)
+                login(request, user)
+                return redirect('/')
+            except ValidationError as e:
+                for msg in e.messages:
+                    messages.error(request, msg)
 
     return render(request, 'users/register.html')
 
